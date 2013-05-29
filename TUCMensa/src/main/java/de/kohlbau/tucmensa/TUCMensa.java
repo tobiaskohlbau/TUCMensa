@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
@@ -27,6 +29,7 @@ import java.net.URL;
  */
 public class TUCMensa extends Activity {
 
+    TextView tv;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +41,8 @@ public class TUCMensa extends Activity {
         String url = baseURL + "&" + year + "&" + month + "&" + day;
         DownloadTUCMensa tuc = new DownloadTUCMensa();
         tuc.execute(url);
+        tv = (TextView) findViewById(R.id.text);
+
     }
 
     private class DownloadTUCMensa extends AsyncTask<String, Void, String> {
@@ -80,28 +85,36 @@ public class TUCMensa extends Activity {
                 public void startDocument()
                 {
                     Log.d("TUC", "Document starts.");
+                    tv.setText(tv.getText() + "\n" + "Document starts.");
                 }
 
                 @Override
                 public void endDocument()
                 {
                     Log.d("TUC", "Document ends.");
+                    tv.setText(tv.getText() + "\n" + "Document ends.");
                 }
                 @Override
                 public void startElement( String namespaceURI, String localName,
                                           String qName, Attributes atts )
                 {
                     Log.d("TUC", "qName: " + qName);
-                    for ( int i = 0; i < atts.getLength(); i++ )
+                    tv.setText(tv.getText() + "\n" + "qName: " + qName);
+                    for ( int i = 0; i < atts.getLength(); i++ ){
                         Log.d("TUC", "Attribut no. " + i + ": " + atts.getQName(i) + " = " + atts.getValue(i) + "\n");
+                        tv.setText(tv.getText() + "\n" + "Attribut no. " + i + ": " + atts.getQName(i) + " = " + atts.getValue(i));
+                    }
                 }
                 @Override
                 public void characters( char[] ch, int start, int length )
                 {
                     Log.d("TUC", "Characters:");
+                    tv.setText(tv.getText() + "\n" + "Characters:" + "\n");
 
-                    for ( int i = start; i < (start + length); i++ )
+                    for ( int i = start; i < (start + length); i++ ){
                         Log.d("TUC", "" + ch[i]);
+                        tv.setText(tv.getText() + "" + ch[i]);
+                    }
                 }
             };
 
