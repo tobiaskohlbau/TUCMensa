@@ -1,133 +1,134 @@
 package de.kohlbau.tucmensa;
 
-import android.app.Activity;
-import android.os.AsyncTask;
+import android.app.ActionBar;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.helpers.DefaultHandler;
+import java.util.ArrayList;
+import java.util.Calendar;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+public class TUCMensa extends FragmentActivity {
+    private static int mYear;
+    private static int mMonth;
+    private static int mDay;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+    public void onRadioButtonClicked(View view) {
+        boolean checked = ((RadioButton) view).isChecked();
+        switch(view.getId()) {
+            case R.id.reich:
+                if (checked)
+                    refreshMeal(mYear, mMonth, mDay, XMLLoader.MENSA_REICH);
+                    break;
+            case R.id.strana:
+                if (checked)
+                    refreshMeal(mYear, mMonth, mDay, XMLLoader.MENSA_STRANA);
+                    break;
+        }
+    }
 
-/**
- * Created by tobias on 5/25/13.
- */
-public class TUCMensa extends Activity {
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
 
-    TextView tv;
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
 
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            mYear = year;
+            mMonth = month;
+            mDay = day;
+        }
+    }
+
+    public void refreshMeal(int year, int month, int day, int mensa) {
+        XMLLoader xmlLoader = new XMLLoader(getBaseContext(), year, month, day, mensa);
+        xmlLoader.execute();
+    }
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    private BroadcastReceiver mMealReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            LinearLayout ll = (LinearLayout) findViewById(R.id.ll);
+            ll.removeAllViews();
+            ArrayList<Meal> entries = intent.getParcelableArrayListExtra("entries");
+            if (entries != null) {
+                for (Meal entry : entries) {
+                    LinearLayout linearLayout = new LinearLayout(context);
+                    TextView textView = new TextView(context);
+                    ImageView imageView = new ImageView(context);
+
+                    linearLayout.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    textView.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    imageView.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+                    textView.setText("Category: " + entry.getCategory() + "\n" +
+                            "Description: " + entry.getDescription() + "\n" +
+                            "Student: " + (entry.getPrice()[2] > 0 ? String.format("%1$,.2f", entry.getPrice()[0]) + " \u20ac" : "Daily prices") + "\n" +
+                            "Coworker: " + (entry.getPrice()[2] > 0 ? String.format("%1$,.2f", entry.getPrice()[1]) + " \u20ac" : "Daily prices") + "\n" +
+                            "Guest: " + (entry.getPrice()[2] > 0 ? String.format("%1$,.2f", entry.getPrice()[2]) + " \u20ac" : "Daily prices") + "\n" +
+                            "Rating: " + entry.getRating() + "\n"
+                    );
+                    imageView.setImageBitmap(entry.getImage());
+
+                    linearLayout.addView(textView);
+                    linearLayout.addView(imageView);
+                    ll.addView(linearLayout);
+                }
+            }
+        }
+    };
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tucmensa);
-        String baseURL =  "http://www.swcz.de/bilderspeiseplan/xml.php?plan=1479835489";
-        String year = "2013";
-        String month = "5";
-        String day = "28";
-        String url = baseURL + "&" + year + "&" + month + "&" + day;
-        DownloadTUCMensa tuc = new DownloadTUCMensa();
-        tuc.execute(url);
-        tv = (TextView) findViewById(R.id.text);
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
+        findViewById(R.id.reich).performClick();
 
     }
 
-    private class DownloadTUCMensa extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... strings) {
-            HttpURLConnection connection = null;
-            StringBuffer stringBuffer = new StringBuffer("");
-            try {
-                URL url = new URL(strings[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setReadTimeout(10000);
-                connection.setConnectTimeout(15000);
-                connection.setRequestMethod("GET");
-                connection.setDoInput(true);
-                connection.connect();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMealReceiver,
+                new IntentFilter("de.kohlbau.tucmensa.XMLParsed"));
 
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String s = "";
-
-                while((s = bufferedReader.readLine()) != null) {
-                    stringBuffer.append(s);
-                }
-
-            } catch (IOException e) {
-                Log.e("TUC", e.toString());
-            }
-
-            return stringBuffer.toString();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser saxParser = factory.newSAXParser();
-            DefaultHandler handler = new DefaultHandler() {
-                @Override
-                public void startDocument()
-                {
-                    Log.d("TUC", "Document starts.");
-                    tv.setText(tv.getText() + "\n" + "Document starts.");
-                }
-
-                @Override
-                public void endDocument()
-                {
-                    Log.d("TUC", "Document ends.");
-                    tv.setText(tv.getText() + "\n" + "Document ends.");
-                }
-                @Override
-                public void startElement( String namespaceURI, String localName,
-                                          String qName, Attributes atts )
-                {
-                    Log.d("TUC", "qName: " + qName);
-                    tv.setText(tv.getText() + "\n" + "qName: " + qName);
-                    for ( int i = 0; i < atts.getLength(); i++ ){
-                        Log.d("TUC", "Attribut no. " + i + ": " + atts.getQName(i) + " = " + atts.getValue(i) + "\n");
-                        tv.setText(tv.getText() + "\n" + "Attribut no. " + i + ": " + atts.getQName(i) + " = " + atts.getValue(i));
-                    }
-                }
-                @Override
-                public void characters( char[] ch, int start, int length )
-                {
-                    Log.d("TUC", "Characters:");
-                    tv.setText(tv.getText() + "\n" + "Characters:" + "\n");
-
-                    for ( int i = start; i < (start + length); i++ ){
-                        Log.d("TUC", "" + ch[i]);
-                        tv.setText(tv.getText() + "" + ch[i]);
-                    }
-                }
-            };
-
-
-            InputSource source = new InputSource(new StringReader(s));
-            saxParser.parse( source, handler );
-        } catch (Exception e) {
-            Log.e("TUC", e.toString() + "here");
-
-        }
-
-        }
     }
 
-
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMealReceiver);;
+        super.onPause();
+    }
 }

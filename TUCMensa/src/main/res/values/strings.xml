@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TUC Mensa</string>
+    <string name="reich">Reichenhainer Str.</string>
+    <string name="strana">Strasse der Nationen</string>
 </resources>
