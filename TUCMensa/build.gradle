@@ -3,13 +3,13 @@ buildscript {
         maven { url 'http://repo1.maven.org/maven2' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.4'
+        classpath 'com.android.tools.build:gradle:0.4.2'
     }
 }
 apply plugin: 'android'
 
 dependencies {
-    compile files('libs/android-support-v4.jar')
+    compile 'com.android.support:support-v4:13.0.0'
 }
 
 android {
@@ -19,5 +19,28 @@ android {
     defaultConfig {
         minSdkVersion 7
         targetSdkVersion 17
+    }
+
+    signingConfigs {
+
+        release {
+            storeFile = file(localKeyStoreFile)
+            storePassword = localStorePassword
+            keyAlias = localStoreKeyAlias
+            keyPassword = localStoreKeyPassword
+        }
+    }
+
+    productFlavors {
+        playstore {
+            versionCode 4
+            versionName "1.0.2"
+        }
+    }
+
+    buildTypes {
+        debug {
+            packageNameSuffix ".debug"
+        }
     }
 }

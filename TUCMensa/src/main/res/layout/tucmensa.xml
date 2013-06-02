@@ -22,13 +22,23 @@
                      android:text="@string/strana"
                      android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_height="100dp"
+        android:layout_width="wrap_content">
     <Button
             android:id="@+id/button"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_width="wrap_content"
             android:text="Date"
             android:onClick="showDatePickerDialog"/>
-
+    <TextView
+        android:id="@+id/copyright"
+        android:padding="5dp"
+        android:layout_height="fill_parent"
+        android:layout_width="wrap_content"
+        android:text="Die Daten und Bilder unterliegem dem Urheberrecht vom Studentenwerk Chemnitz-Zwickau"/>
+    </LinearLayout>
 
     <ScrollView
             android:id="@+id/scrollView"

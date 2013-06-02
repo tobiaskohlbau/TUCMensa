@@ -87,6 +87,11 @@ public class TUCMensa extends FragmentActivity {
                     imageView.setLayoutParams(new ActionBar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
 
+
+
+
+
+
                     linearLayout.setOrientation(LinearLayout.VERTICAL);
 
                     textView.setText("Category: " + entry.getCategory() + "\n" +
