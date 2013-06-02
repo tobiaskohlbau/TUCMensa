@@ -22,17 +22,17 @@ android {
     }
 
     signingConfigs {
-
         release {
             storeFile = file(localKeyStoreFile)
             storePassword = localStorePassword
-            keyAlias = localStoreKeyAlias
-            keyPassword = localStoreKeyPassword
+            keyAlias = localKeyAlias
+            keyPassword = localKeyPassword
         }
     }
 
     productFlavors {
         playstore {
+
             versionCode 4
             versionName "1.0.2"
         }
@@ -41,6 +41,10 @@ android {
     buildTypes {
         debug {
             packageNameSuffix ".debug"
+        }
+
+        release {
+            signingConfig signingConfigs.release
         }
     }
 }
