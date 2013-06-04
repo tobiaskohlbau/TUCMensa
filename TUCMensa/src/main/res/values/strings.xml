@@ -2,4 +2,13 @@
     <string name="app_name">TUC Mensa</string>
     <string name="reich">Reichenhainer Str.</string>
     <string name="strana">Strasse der Nationen</string>
+    <string name="category">Category</string>
+    <string name="description">Description</string>
+    <string name="student">Student</string>
+    <string name="coworker">Coworker</string>
+    <string name="guest">Guest</string>
+    <string name="rating">Rating</string>
+    <string name="separator">:</string>
+    <string name="imageDescription">Meal</string>
+    <string name="refreshed">Refreshed!</string>
 </resources>

@@ -74,6 +74,10 @@ public class Meal implements Parcelable {
         return price;
     }
 
+    public double getPrice(int pos) {
+        return price[pos];
+    }
+
     public void setPrice(double[] price) {
         this.price = price;
     }

@@ -3,54 +3,61 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="#FFFFFF">
 
-    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-        <RadioButton android:id="@+id/reich"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:text="@string/reich"
-                     android:onClick="onRadioButtonClicked"
-                     android:checked="true"
-                    />
-        <RadioButton android:id="@+id/strana"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:text="@string/strana"
-                     android:onClick="onRadioButtonClicked"/>
-    </RadioGroup>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_height="100dp"
-        android:layout_width="wrap_content">
-    <Button
-            android:id="@+id/button"
-            android:layout_height="fill_parent"
-            android:layout_width="wrap_content"
-            android:text="Date"
-            android:onClick="showDatePickerDialog"/>
     <TextView
-        android:id="@+id/copyright"
-        android:padding="5dp"
-        android:layout_height="fill_parent"
-        android:layout_width="wrap_content"
-        android:text="Die Daten und Bilder unterliegem dem Urheberrecht vom Studentenwerk Chemnitz-Zwickau"/>
+            android:id="@+id/copyright"
+            android:padding="5dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Die Daten und Bilder unterliegem dem Urheberrecht vom Studentenwerk Chemnitz-Zwickau"/>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent">
+
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+            <RadioButton
+                    android:id="@+id/reich"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reich"
+                    android:onClick="onRadioButtonClicked"
+                    android:checked="true"
+                    android:textColor="#FF8800"
+                    android:shadowColor="#FF8800"
+                    />
+
+            <RadioButton
+                    android:id="@+id/strana"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/strana"
+                    android:onClick="onRadioButtonClicked"
+                    android:textColor="#FF8800"/>
+        </RadioGroup>
+
+        <Button
+                android:id="@+id/button"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Date"
+                android:onClick="showDatePickerDialog"
+                android:layout_marginLeft="48dp"
+                android:layout_marginTop="8dp"/>
     </LinearLayout>
 
-    <ScrollView
-            android:id="@+id/scrollView"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
-
-        <LinearLayout
-                android:id="@+id/ll"
-                android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
-                android:orientation="vertical">
-
-        </LinearLayout>
-    </ScrollView>
+    <ListView
+            android:id="@+id/listMeals"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:choiceMode="none"
+            android:dividerHeight="4px"
+            android:divider="#FF8800"/>
 </LinearLayout>
